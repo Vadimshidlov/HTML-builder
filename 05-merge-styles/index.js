@@ -1,8 +1,8 @@
-const path = require("node:path");
-const fs = require("node:fs/promises");
+const path = require('node:path');
+const fs = require('node:fs/promises');
 const pathtoFolder = path.join(__dirname);
-const pathtoFolderStyles = path.join(pathtoFolder, "styles");
-const pathToProjectDist = path.join(pathtoFolder, "project-dist");
+const pathtoFolderStyles = path.join(pathtoFolder, 'styles');
+const pathToProjectDist = path.join(pathtoFolder, 'project-dist');
 console.log(`----------->`, pathToProjectDist);
 console.log(pathtoFolder);
 console.log(pathtoFolderStyles);
@@ -21,16 +21,16 @@ async function bundleCss() {
 
     for (item of files) {
       const itemExt = path.extname(item.name);
-      if (item.isFile() && itemExt === ".css") {
+      if (item.isFile() && itemExt === '.css') {
         const pathToFile = path.join(pathtoFolderStyles, item.name);
-        let dataOfItem = "";
-        fs.readFile(pathToFile, "utf8", function (error, data) {
+        let dataOfItem = '';
+        fs.readFile(pathToFile, 'utf8', function (error, data) {
           if (error) throw error;
           // console.log(data);
           // dataOfItem = data;
           // console.log(dataOfItem);
         }).then((data) => {
-          fs.appendFile(`${pathToProjectDist}/ bundle.css`, data, (err) => {
+          fs.appendFile(`${pathToProjectDist}/bundle.css`, data, (err) => {
             if (err) {
               console.error(err);
             }
