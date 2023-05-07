@@ -1,17 +1,9 @@
 const path = require('node:path');
 const fs = require('node:fs/promises');
+const fsWithoutPromises = require('fs');
 const pathtoFolder = path.join(__dirname);
 const pathtoFolderStyles = path.join(pathtoFolder, 'styles');
 const pathToProjectDist = path.join(pathtoFolder, 'project-dist');
-console.log(`----------->`, pathToProjectDist);
-console.log(pathtoFolder);
-console.log(pathtoFolderStyles);
-
-// function createFile() {
-//   fs.open(`${pathToProjectDist}/bundle.css`, "w", (err) => {
-//     if (err) throw err;
-//   });
-// createFile();
 
 async function bundleCss() {
   try {
@@ -19,16 +11,12 @@ async function bundleCss() {
       withFileTypes: true,
     });
 
-    for (item of files) {
+    for (let item of files) {
       const itemExt = path.extname(item.name);
       if (item.isFile() && itemExt === '.css') {
         const pathToFile = path.join(pathtoFolderStyles, item.name);
-        let dataOfItem = '';
-        fs.readFile(pathToFile, 'utf8', function (error, data) {
+        fs.readFile(pathToFile, 'utf8', function (error) {
           if (error) throw error;
-          // console.log(data);
-          // dataOfItem = data;
-          // console.log(dataOfItem);
         }).then((data) => {
           fs.appendFile(`${pathToProjectDist}/bundle.css`, data, (err) => {
             if (err) {
@@ -36,14 +24,15 @@ async function bundleCss() {
             }
           });
         });
-
-        // console.log(path.extname(item.name));
-        // console.log(item.name);
-        // console.log(pathToFile);
       }
     }
   } catch (error) {
     console.log(error);
   }
 }
-bundleCss();
+
+
+fsWithoutPromises.unlink(path.join(pathToProjectDist, 'bundle.css'), ()=>{
+  bundleCss();
+});
+
