@@ -1,28 +1,26 @@
-// const fs = require("fs");
-// const fs = require("fs");
-const fs = require("node:fs/promises");
-const path = require("node:path");
+const fs = require('node:fs/promises');
+const fsWithoutPromises = require('fs');
+const path = require('node:path');
 const pathToFolder = path.join(__dirname);
-const pathToFolderOfCopy = path.join(__dirname, "files");
+const pathToFolderOfCopy = path.join(__dirname, 'files');
+const pathToFolderToCopy = path.join(__dirname, 'files-copy');
 console.log(pathToFolderOfCopy);
 
 //create new folder
-fs.mkdir(path.join(pathToFolder, "files-copy"), {
-  recursive: true,
-});
-const pathToFolderToCopy = path.join(__dirname, "files-copy");
-console.log(pathToFolderToCopy);
+async function createDir() {
+  fs.mkdir(path.join(pathToFolder, 'files-copy'), {
+    recursive: true,
+  });
+}
 
 async function copyDir() {
   try {
     const files = await fs.readdir(pathToFolderOfCopy, {
       withFileTypes: true,
     });
-    for (item of files) {
+    for (let item of files) {
       const pathToFile = path.join(pathToFolderOfCopy, item.name);
-      console.log(`old -->`, pathToFile);
       const newPathToFile = path.join(pathToFolderToCopy, item.name);
-      console.log(`new -->`, newPathToFile);
       fs.copyFile(pathToFile, newPathToFile);
     }
     // console.log(files);
@@ -30,4 +28,13 @@ async function copyDir() {
     console.log(error);
   }
 }
-copyDir();
+
+fsWithoutPromises.rm(
+  path.join(__dirname, 'files-copy'),
+  { recursive: true },
+  () => {
+    createDir().then(() => {
+      copyDir();
+    });
+  }
+);
